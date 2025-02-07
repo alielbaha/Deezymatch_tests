@@ -1,22 +1,30 @@
-The algorithm follows these steps:
-    1. Retain the first letter of the word (uppercase).
-    2. Replace consonants with numeric codes based on their phonetic similarity:
-       - B, F, P, V → 1
-       - C, G, J, K, Q, S, X, Z → 2
-       - D, T → 3
-       - L → 4
-       - M, N → 5
-       - R → 6
-    3. Remove duplicate consecutive numbers.
-    4. Remove vowels (A, E, I, O, U), H, W, and Y (except for the first letter).
-    5. Pad or truncate the result to ensure a 4-character code.
+import unicodedata
+import re
 
-    Args:
-        word (str): The input word to encode.
+def remove_accents(text):
+    return ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
 
-    Returns:
-        str: The 4-character Soundex code.
+def french_soundex(word):
 
-    Example:
-        >>> soundex("Robert")
-        'R163'
+    word = remove_accents(word).upper()
+
+    first_letter = word[0]
+    replacements = [
+        (r'[AEIOUYH]', ''),  
+        (r'[BFPV]', '1'),
+        (r'[CGJKQSXZ]', '2'),
+        (r'[DT]', '3'),
+        (r'[L]', '4'),
+        (r'[MN]', '5'),
+        (r'[R]', '6')
+    ]
+
+    for pattern, repl in replacements:
+        word = re.sub(pattern, repl, word)
+
+    
+    word = re.sub(r'(.)\1+', r'\1', word)
+    word = first_letter + word[1:]
+    word = word[0] + re.sub(r'[^1-6]', '', word[1:])
+
+    return (word + '000')[:4]
