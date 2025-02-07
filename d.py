@@ -1,26 +1,80 @@
-A simplified version of the Double Metaphone algorithm.
+import re
 
-    This function takes an English word and generates two phonetic keys:
-    - Primary Key: Represents the most common pronunciation.
-    - Secondary Key: Accounts for alternative pronunciations.
-
-    The algorithm follows these rules:
-    1. Handles silent letters at the start (e.g., "KN" → "N", "WR" → "R").
-    2. Replaces letter patterns with their phonetic equivalents (e.g., "PH" → "F").
-    3. Simplifies complex consonant sounds (e.g., "SCH" → "SK").
-    4. Removes certain trailing letters (e.g., "Y" and "W" at the end of words).
-    5. Generates a secondary key with slight variations for alternate pronunciations.
-
-    Args:
-        word (str): The input word to be processed.
-
-    Returns:
-        tuple: A pair of strings representing the primary and secondary phonetic keys.
-
-    Example:
-        >>> simple_double_metaphone("knight")
-        ('NIGT', 'NIGT')
-
-        >>> simple_double_metaphone("xylophone")
-        ('KSLOFONE', 'XSLOFONE')
+def metaphone(word):
     """
+    args:
+        str: The input word to be processed
+
+    returns:
+        str: The phonetic representation of the word
+
+    examples:
+        >>> metaphone("knight")
+        'NIGT'
+
+        >>> metaphone("michael")
+        'MKL'
+    """
+    word = word.upper()
+    word = re.sub(r'[^A-Z]', '', word)  
+    
+    
+    if word.startswith("KN") or word.startswith("GN") or word.startswith("PN") or word.startswith("WR") or word.startswith("PS"):
+        word = word[1:]
+    
+    result = ""
+    previous_char = ""
+    
+    i = 0
+    while i < len(word):
+        char = word[i]
+        
+        if char == previous_char:
+            i += 1
+            continue
+        
+        if char in "AEIOU" and i == 0:
+            result += char
+        elif char in "BFPV":
+            result += "F"
+        elif char in "CKQ":
+            result += "K"
+        elif char == "G":
+            if (i < len(word) - 1 and word[i + 1] == "H") or (i > 0 and word[i - 1] in "G"):  # silent G
+                pass
+            elif i < len(word) - 2 and word[i + 1] in "IEY":
+                result += "J"
+            else:
+                result += "K"
+        elif char == "H":
+            if i > 0 and word[i - 1] in "AEIOU":
+                result += "H"
+        elif char == "J":
+            result += "J"
+        elif char == "L":
+            result += "L"
+        elif char == "M" or char == "N":
+            result += char
+        elif char == "R":
+            result += "R"
+        elif char in "SZ":
+            result += "S"
+        elif char == "T":
+            if i < len(word) - 2 and word[i + 1:i + 3] == "CH":
+                pass
+            else:
+                result += "T"
+        elif char in "DT":
+            result += "T"
+        elif char == "V":
+            result += "F"
+        elif char == "W" or char == "Y":
+            if i < len(word) - 1 and word[i + 1] in "AEIOU":
+                result += char
+        elif char == "X":
+            result += "KS"
+        
+        previous_char = char
+        i += 1
+    
+    return result
