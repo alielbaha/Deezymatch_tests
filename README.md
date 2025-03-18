@@ -7,19 +7,8 @@
 
 ## Installation Guide
 
-### Install PyTorch (Compatible Version)
-Deep Phonemizer requires **PyTorch 2.4 or earlier**. Later versions (2.5 and above) introduce changes that may cause errors when loading saved models.
 
-To install PyTorch 2.4:
-```bash
-pip install torch==2.4.0 torchvision torchaudio
-```
-
-To verify the installation:
-```python
-import torch
-print(torch.__version__)  # Should print 2.4.0
-```
+### Install packages in the requirements file of Deep-Phonemizer repository : https://github.com/spring-media/DeepPhonemizer
 
 ### Install Deep Phonemizer
 Once PyTorch is installed, install Deep Phonemizer with:
@@ -27,93 +16,65 @@ Once PyTorch is installed, install Deep Phonemizer with:
 pip install deep-phonemizer
 ```
 
-To check if the installation was successful:
-```python
-import dp
-print(dp.__version__)
+### Install PyTorch (Compatible Version)
+Deep Phonemizer requires **a PyTorch version earlier than 2.5**. Later versions (2.6) introduce changes that may cause errors when loading saved models.
+
+To install PyTorch 2.4:
+```bash
+pip install "torch<2.5"
 ```
 
+Check installation:
+```python
+print(torch.__version__)  # Should print a version earlier than 2.5 
+```
+Remark : If it still prints 2.6 restart the kernel (since the pytorch version that was installed through the requirements file is still being used).
+
+Check again:
+```python
+print(torch.__version__)  # Should print a version earlier than 2.5 
+```
+If it's still 2.5+, downgrade using this:
+```bash
+pip install torch==2.4.0 --force-reinstall
+```
 ---
 
-## Usage Guide
+## Example
 
 ### Loading a Pretrained Model
 ```python
 from dp.phonemizer import Phonemizer
-phonemizer = Phonemizer.from_checkpoint("en_us_cmudict")
+phonemizer = Phonemizer.from_checkpoint("pretrained_models/latin_ipa_forward.pt")
 ```
+the `pretrained_models` folder contains 3 models : 
+1. en_us_cmudict_ipa_forward (International Phonetic Alphabet) : English (US), German (download weights here https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/en_us_cmudict_ipa_forward.pt
+3. en_us_cmudict_forward (ARPAbet) : English (US) (download weights here https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/en_us_cmudict_forward.pt)
+4. latin_ipa_forward (International Phonetic Alphabet): English (US),English (UK), French, Spanish (download weights here https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/latin_ipa_forward.pt)
 
 ### Converting Text to Phonemes
 ```python
-text = "Hello world!"
-phonemes = phonemizer.phonemise(text)
-print(phonemes)  # Output: 'həˈloʊ wɝld'
+phonemizer("Hello world!", lang="en_us")
+>>> həˈloʊ wɝld'
 ```
-
-### Saving and Loading a Custom Model
-```python
-phonemizer.save("custom_model.pth")
-# Later, you can load it back:
-phonemizer = Phonemizer.from_checkpoint("custom_model.pth")
-```
-
 ---
 
-## Common Errors and Troubleshooting
+## You might enconter the following errors:
 
-### 1. `ModuleNotFoundError: No module named 'dp'`
-- This means Deep Phonemizer is not installed.
-- Run: `pip install deep-phonemizer`
-
-### 2. `UnpicklingError: Weights only load failed`
+### `UnpicklingError: Weights only load failed`
 **Cause:** PyTorch 2.6+ changed the default value of `weights_only` to `True` when using `torch.load`, breaking older model checkpoints.
 
-**Solution:** Downgrade PyTorch to 2.4:
-```bash
-pip install torch==2.4.0 --force-reinstall
-```
-Alternatively, modify your code to explicitly set `weights_only=False`:
+if the above solution doesn't work, do the following: 
+modify your code to explicitly set `weights_only=False`
 ```python
-model = torch.load("model.pth", weights_only=False)
-```
-
-### 3. `RuntimeError: Model file cannot be found`
-- Ensure you are providing the correct path to the model file.
-- Use absolute paths if relative paths cause issues.
-
-### 4. `torch.serialization.pickle.UnpicklingError: Unsupported global`
-- Some models use custom classes that need to be manually added to safe globals in PyTorch.
-- Workaround:
-```python
-import torch.serialization
-from dp.preprocessing.text import Preprocessor
-
-torch.serialization.add_safe_globals([Preprocessor])
-model = torch.load("model.pth")
+model = torch.load("model-path", weights_only=False)
 ```
 
 ---
 
-## Why Deep Phonemizer Doesn't Work with PyTorch 2.5+
+## Why it doesn't work with PyTorch 2.5+
 Deep Phonemizer relies on PyTorch's `torch.load` function to load model checkpoints. In PyTorch 2.5 and later:
-1. **`weights_only=True` is the default:** This prevents models that contain additional objects from loading correctly.
-2. **Stricter unpickling security:** Many custom classes (like Deep Phonemizer's `Preprocessor`) must be explicitly allowlisted, requiring extra steps.
-3. **Potential API changes:** PyTorch updates often introduce breaking changes in serialization and model loading.
+**`weights_only=True` is the default:** This prevents models that contain additional objects from loading correctly.
 
-For these reasons, **Deep Phonemizer is best used with PyTorch 2.4 or earlier**.
 
-To check your PyTorch version:
-```python
-import torch
-print(torch.__version__)
-```
-If it's 2.5+, downgrade using:
-```bash
-pip install torch==2.4.0 --force-reinstall
-```
-
----
-
-## Conclusion
-By following this guide, you should be able to install, use, and troubleshoot Deep Phonemizer effectively. If you run into any issues, ensure that your PyTorch version is compatible and check for common errors. Happy phonemizing!
 
