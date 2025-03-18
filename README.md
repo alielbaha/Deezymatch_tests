@@ -48,9 +48,15 @@ from dp.phonemizer import Phonemizer
 phonemizer = Phonemizer.from_checkpoint("pretrained_models/latin_ipa_forward.pt")
 ```
 the `pretrained_models` folder contains 3 models : 
-1. en_us_cmudict_ipa_forward (International Phonetic Alphabet) : English (US), German (download weights here https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/en_us_cmudict_ipa_forward.pt
-3. en_us_cmudict_forward (ARPAbet) : English (US) (download weights here https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/en_us_cmudict_forward.pt)
-4. latin_ipa_forward (International Phonetic Alphabet): English (US),English (UK), French, Spanish (download weights here https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/latin_ipa_forward.pt)
+1. en_us_cmudict_ipa_forward (International Phonetic Alphabet) :
+   - Supported languages : English (US), German
+   - download weights here : https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/en_us_cmudict_ipa_forward.pt
+3. en_us_cmudict_forward (ARPAbet) :
+   - supported languages : English (US)
+   - download weights here : https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/en_us_cmudict_forward.pt
+5. latin_ipa_forward (International Phonetic Alphabet):
+   - Supported languages : English (US),English (UK), French, Spanish
+   - download weights here https://public-asai-dl-models.s3.eu-central-1.amazonaws.com/DeepPhonemizer/latin_ipa_forward.pt
 
 ### Converting Text to Phonemes
 ```python
