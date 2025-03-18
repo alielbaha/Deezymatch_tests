@@ -1,4 +1,4 @@
-# Deep Phonemizer - Installation and Usage Guide
+# Deep Phonemizer - Installation 
 
 ## Introduction
 **Deep Phonemizer** is a tool designed for converting text into phonemes using deep learning models. It is widely used in speech synthesis and linguistic research. This guide provides detailed instructions on how to install and use Deep Phonemizer, along with common errors and troubleshooting steps.
@@ -19,7 +19,7 @@ pip install deep-phonemizer
 ### Install PyTorch (Compatible Version)
 Deep Phonemizer requires **a PyTorch version earlier than 2.5**. Later versions (2.6) introduce changes that may cause errors when loading saved models.
 
-To install PyTorch 2.4:
+Install an earlier version of Pytorch:
 ```bash
 pip install "torch<2.5"
 ```
