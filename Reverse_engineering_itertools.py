@@ -86,3 +86,27 @@ Remarks :
  - matches the LONGEST PHONEME first (which wasn't the case with graphviz).
 
  - generates phonetic variations using itertools.product to create combinations of phoneme replacements."""
+
+
+
+
+
+
+import re
+
+def trigrames_to_phoneme(text, phoneme_list):
+
+    
+    words = text.split()
+    matches = []
+    
+    for word in words:
+        for i in range(len(word) - 2):  
+            substring = word[i:i+3]
+            sub_transcription = model([substring], lang='fr')
+            phonemes = re.findall('|'.join(map(re.escape, phoneme_list)), sub_transcription[0])
+            
+            if len(phonemes) == 1:  
+                matches.append((substring, phonemes[0]))
+    
+    return matches
