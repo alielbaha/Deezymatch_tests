@@ -152,4 +152,17 @@ def trigrames_to_phoneme(text, phoneme_list):
 
 
 
-Deux Mulets cheminaient, l’un d’avoine chargé, l’autre portant l’argent de la gabelle. Brisez les tristes fers du honteux esclavage Où vous tient du péché le commerce honteux, et venez recevoir le glorieux servage Que vous tendent les mains de la reine des cieux : L’un, sur vous, à vos sens donne pleine victoire ; l’autre sur vos désirs vous fait régner en rois ; l’un vous tire aux enfers, et l’autre dans la gloire : Hélas ! peut-on, mortels, balancer sur le choix ? Ce sont faits inouïs, grand roi, que tes victoires ! L’avenir aura peine à les bien concevoir ; et de nos vieux héros les pompeuses histoires Ne nous ont point chanté ce que tu nous fais voir. Quoi ! presque au même instant qu’on te l’a vu résoudre Voir toute une province unie à tes États ! Les rapides torrents, et les vents, et la foudre, Vont-ils, dans leurs effets, plus vite que ton bras ? N’attends pas, au retour d’un si fameux ouvrage, Des soins de notre muse un éclatant hommage. Cet exploit en demande, il le faut avouer. Mais nos chansons, grand roi, ne sont pas sitôt prêtes Et tu mets moins de temps à faire tes conquêtes Qu’il n’en faut pour les bien louer. Aux larmes, Le Vayer, laisse tes yeux ouverts : Ton deuil est raisonnable, encor qu’il soit extrême ; et, lorsque pour toujours on perd ce que tu perds, La Sagesse, crois-moi, peut pleurer elle-même. On se propose à tort cent préceptes divers Pour vouloir d’un œil sec voir mourir ce qu’on aime ; L’effort en est barbare aux yeux de l’univers, Et c’est brutalité plus que vertu suprême. On sait bien que les pleurs ne ramèneront pas Ce cher fils que t’enlève un imprévu trépas ; Mais la perte, par là, n’en est pas moins cruelle. Ses vertus de chacun le faisoient révérer ; Il avoit le cœur grand, l’esprit beau, l’âme belle ; Et ce sont des sujets à toujours le pleurer. Vous voyez bien, monsieur, que je m’écarte fort du chemin qu’on suit d’ordinaire en pareille rencontre, et que le sonnet que je vous envoie n’est rien moins qu’une consolation. Mais j’ai cru qu’il falloit en user de la sorte avec vous, et que c’est consoler un philosophe que de lui justifier ses larmes, et de mettre sa douleur en liberté. Si je n’ai pas trouvé d’assez fortes raisons pour affranchir votre tendresse des sévères leçons de la philosophie, et pour vous obliger à pleurer sans contrainte, il en faut accuser le peu d’éloquence d’un homme qui ne sauroit persuader ce qu’il sait si bien faire.
+letters = string.ascii_lowercase  
+triplets = itertools.product(letters, repeat=3)
+T = []
+for triplet in triplets:
+    T.append(''.join(triplet))
+T
+
+
+S = []
+for triplet in T:
+    phon = model(triplet,"fr")
+    if len(phon) <=1:
+        S.append((triplet,phon))
+S
