@@ -168,16 +168,24 @@ for triplet in T:
 S
 
 
-"""
-J’ai le plaisir de vous inviter à une présentation que je donnerai prochainement sur les algorithmes de correspondance floue — cette science subtile qui permet de mesurer la similarité entre les noms, d’établir des liens entre entités, et qui joue un rôle clé dans des domaines sensibles comme la finance et la conformité.
+import re
+import unicodedata
 
-La présentation abordera les points suivants :
+def clean_text(input_str):
+    """
+    >>> clean_text("l'île-était très beau, même à l’été!")
+    'lileetait tres beau meme a lete'
+    """
+    preserved = {'é', 'è', 'ê'}
+    
+    for char in preserved_accents:
+        input_str = input_str.replace(char, f'__{char}__')
+    
+    nfkd_form = unicodedata.normalize('NFKD', input_str)
+    without_accents = ''.join([c for c in nfkd_form if not unicodedata.combining(c)])
+    without_punctuation = re.sub(r'[^\w\s]', '', without_accents)
+    for char in preserved_accents:
+        without_punctuation = without_punctuation.replace(f'__{char}__', char)
+    
+    return without_punctuation
 
-Le concept de fuzzy matching et son fonctionnement en pratique
-
-Des cas d’application concrets (comme le contrôle des sanctions)
-
-Les outils de stress-test développés pour en évaluer la robustesse
-
-Si le sujet vous intéresse — ou si vous êtes simplement curieux de voir comment une simple faute de frappe peut bloquer une transaction de 10 millions d’euros — ce workshop pourrait bien vous plaire !
-"""
