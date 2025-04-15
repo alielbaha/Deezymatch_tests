@@ -168,24 +168,7 @@ for triplet in T:
 S
 
 
-import re
-import unicodedata
+arabic_string = 'ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي ء أ إ آ ى ة ئ ؤ'
 
-def clean_text(input_str):
-    """
-    >>> clean_text("l'île-était très beau, même à l’été!")
-    'lileetait tres beau meme a lete'
-    """
-    preserved = {'é', 'è', 'ê'}
-    
-    for char in preserved_accents:
-        input_str = input_str.replace(char, f'__{char}__')
-    
-    nfkd_form = unicodedata.normalize('NFKD', input_str)
-    without_accents = ''.join([c for c in nfkd_form if not unicodedata.combining(c)])
-    without_punctuation = re.sub(r'[^\w\s]', '', without_accents)
-    for char in preserved_accents:
-        without_punctuation = without_punctuation.replace(f'__{char}__', char)
-    
-    return without_punctuation
+phoneme_symbols: ['p', 'b', 't', 'd', 'ʈ', 'ɖ', 'c', 'ɟ', 'k', 'ɡ', 'q', 'ɢ', 'ʡ', 'ʔ', 'm', 'ɱ', 'n', 'ɳ', 'ɲ', 'ŋ', 'ɴ', 'ʙ', 'r', 'ʀ', 'ɾ', 'ɽ', 'ɸ', 'β', 'f', 'v', 'θ', 'ð', 's', 'z', 'ʃ', 'ʒ', 'ʂ', 'ʐ', 'ç', 'ʝ', 'x', 'ɣ', 'χ', 'ʁ', 'ħ', 'ʕ', 'h', 'ɦ', 'ɬ', 'ɮ', 'ʋ', 'ɹ', 'ɻ', 'j', 'ɰ', 'l', 'ɭ', 'ʎ', 'ʟ', 'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ə', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'a', 'ɶ', 'ɑ', 'ɒ', 'ʘ', 'ǀ', 'ǃ', 'ǂ', 'ǁ', 'ɓ', 'ɗ', 'ʄ', 'ɠ', 'ʛ', 'ˈ', 'ˌ', '.', 'ː', 'ˑ', '|', '‖', 'ʍ', 'w', 'ɥ', '̃', '̥', '̬', '̹', '̜', '̟', '̠', '̈', '̽', '̩', '̯', 'ʰ', 'ʲ', '˞', 'ⁿ', 'ˠ']
 
