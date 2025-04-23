@@ -218,42 +218,23 @@ def vars(name, replacements):
         "replaced_substrings": replaced_substrings
     }
 
-# Example list of names
-names = ["bruce", "philip", "shaun", "lucas", "michelle"]
-
-# Process names and collect results
-results = [vars(name, replacements) for name in names]
-
-# Create DataFrame for analysis
-df = pd.DataFrame(results)
-
-# Flatten list of replaced substrings for frequency count
-all_substrings = [s for row in df["replaced_substrings"] for s in row]
-substring_freq = Counter(all_substrings)
-
-# --- STATISTICS ---
-
-print("📊 General Stats")
-print(f"Total names processed: {len(df)}")
-print(f"Average variations per name: {df['variation_count'].mean():.2f}")
-print(f"Average substitutions per name: {df['substitution_count'].mean():.2f}")
-print("\n🔁 Most common replaced substrings:")
-for substring, freq in substring_freq.most_common():
-    print(f"- {substring}: {freq} times")
-
-# --- VISUALIZATION ---
-
-# Distribution of number of variations per name
-plt.figure(figsize=(10, 6))
-sns.histplot(df["variation_count"], bins=10, kde=True, color="skyblue")
-plt.title("Distribution of Generated Variations per Name")
-plt.xlabel("Number of Variations")
-plt.ylabel("Frequency")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+--------------------
 
 
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Replacement rules and variation generator (from previous solution)
+replacements = {
+    "ɛː": ["E", "É", "È", "Ê", "AI"],
+    "ɛ̃": ["IN", "IM", "AIN", "EIN"],
+    "w": ["G", "GU"],
+    "ɥ": ["U", "HU"],
+    "ɲ": ["GN"],
+    "ʁ": ["R"],
+    "wa": ["OIT", "OI", "OUA", "WA", "UA"],
+}
 
 def vars(name):
     def helper(s):
@@ -261,17 +242,74 @@ def vars(name):
             return ['']
         results = []
         max_len = min(len(s), max(len(k) for k in replacements))
-        
         for l in range(max_len, 0, -1):
             prefix = s[:l]
             if prefix in replacements:
                 for replacement in replacements[prefix]:
                     for suffix_variation in helper(s[l:]):
                         results.append(replacement + suffix_variation)
-        
         if not results:
             first_char = s[0]
             for suffix_variation in helper(s[1:]):
                 results.append(first_char + suffix_variation)
         return results
     return helper(name)
+
+# Example names for analysis (replace with your dataset)
+sample_names = [
+    "wa",       # Example with multi-character key "wa" and single "w"
+    "wɥ",       # Example with two single-character keys ("w" and "ɥ")
+    "ɲa",       # Example with one replacement ("ɲ") and no replacement ("a")
+    "ɛːwa",     # Combines "ɛː" and "wa"
+    "ʁɥ",       # Two single-character replacements
+    "test",     # No replacements (original string returned)
+    "ɛ̃ɲʁ"       # Multiple single-character replacements
+]
+
+# Generate variation counts for each name
+variation_counts = []
+for name in sample_names:
+    variations = vars(name)
+    variation_counts.append({
+        "name": name,
+        "variation_count": len(variations),
+        "variations": variations
+    })
+
+# Create DataFrame for analysis
+df = pd.DataFrame(variation_counts)
+
+# Basic statistics
+total_names = df.shape[0]
+total_variations = df["variation_count"].sum()
+stats = {
+    "Total Names": total_names,
+    "Total Variations": total_variations,
+    "Min Variations": df["variation_count"].min(),
+    "Max Variations": df["variation_count"].max(),
+    "Mean Variations": df["variation_count"].mean(),
+    "Median Variations": df["variation_count"].median(),
+    "Std Dev Variations": df["variation_count"].std()
+}
+
+# Display statistics
+print("=== Summary Statistics ===")
+for key, value in stats.items():
+    print(f"{key}: {value:.2f}" if isinstance(value, float) else f"{key}: {value}")
+
+# Plot distribution of variation counts
+plt.figure(figsize=(10, 6))
+plt.hist(df["variation_count"], bins=np.arange(0.5, df['variation_count'].max() + 1, 1), edgecolor='black')
+plt.title("Distribution of Variation Counts per Name")
+plt.xlabel("Number of Variations")
+plt.ylabel("Frequency")
+plt.xticks(range(1, df['variation_count'].max() + 1))
+plt.grid(axis='y', alpha=0.75)
+plt.show()
+
+# Show names with extremes (min/max variations)
+print("\n=== Names with Minimum Variations ===")
+print(df[df["variation_count"] == df["variation_count"].min()][["name", "variation_count"]])
+
+print("\n=== Names with Maximum Variations ===")
+print(df[df["variation_count"] == df["variation_count"].max()][["name", "variation_count"]])
