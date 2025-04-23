@@ -252,3 +252,26 @@ plt.ylabel("Frequency")
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+
+
+def vars(name):
+    def helper(s):
+        if not s:
+            return ['']
+        results = []
+        max_len = min(len(s), max(len(k) for k in replacements))
+        
+        for l in range(max_len, 0, -1):
+            prefix = s[:l]
+            if prefix in replacements:
+                for replacement in replacements[prefix]:
+                    for suffix_variation in helper(s[l:]):
+                        results.append(replacement + suffix_variation)
+        
+        if not results:
+            first_char = s[0]
+            for suffix_variation in helper(s[1:]):
+                results.append(first_char + suffix_variation)
+        return results
+    return helper(name)
