@@ -172,211 +172,83 @@ arabic_string = 'ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق 
 
 phoneme_symbols: ['p', 'b', 't', 'd', 'ʈ', 'ɖ', 'c', 'ɟ', 'k', 'ɡ', 'q', 'ɢ', 'ʡ', 'ʔ', 'm', 'ɱ', 'n', 'ɳ', 'ɲ', 'ŋ', 'ɴ', 'ʙ', 'r', 'ʀ', 'ɾ', 'ɽ', 'ɸ', 'β', 'f', 'v', 'θ', 'ð', 's', 'z', 'ʃ', 'ʒ', 'ʂ', 'ʐ', 'ç', 'ʝ', 'x', 'ɣ', 'χ', 'ʁ', 'ħ', 'ʕ', 'h', 'ɦ', 'ɬ', 'ɮ', 'ʋ', 'ɹ', 'ɻ', 'j', 'ɰ', 'l', 'ɭ', 'ʎ', 'ʟ', 'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ə', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'a', 'ɶ', 'ɑ', 'ɒ', 'ʘ', 'ǀ', 'ǃ', 'ǂ', 'ǁ', 'ɓ', 'ɗ', 'ʄ', 'ɠ', 'ʛ', 'ˈ', 'ˌ', '.', 'ː', 'ˑ', '|', '‖', 'ʍ', 'w', 'ɥ', '̃', '̥', '̬', '̹', '̜', '̟', '̠', '̈', '̽', '̩', '̯', 'ʰ', 'ʲ', '˞', 'ⁿ', 'ˠ']
 
+import itertools
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+from collections import Counter
 
-phoneme_symbols = [
-    'p', 'b', 't', 'd', 'ʈ', 'ɖ', 'c', 'ɟ', 'k', 'ɡ', 'q', 'ɢ', '\u02A1', '\u0294', 'm', '\u0271', 'n', '\u0273', '\u0272', '\u014B', '\u0274', '\u0299', 'r',
-    '\u0280', '\u027E', '\u027D', '\u0278', '\u03B2', 'f', 'v', '\u03B8', '\u00F0', 's', 'z', '\u0283', '\u0292', '\u0282', '\u0290', '\u00E7', '\u029D', 'x', '\u0263', '\u03C7', '\u0281', '\u0127', '\u0295', 'h',
-    '\u0266', '\u026C', '\u026E', '\u028B', '\u0279', '\u027B', 'j', '\u0270', 'l', '\u026D', '\u028E', '\u029F', 'i', 'y', '\u0268', '\u0289', '\u026F', 'u', '\u026A', '\u028F', '\u028A', 'e', '\u00F8', '\u0258',
-    '\u0275', '\u0264', 'o', '\u0259', '\u025B', '\u0153', '\u025E', '\u025C', '\u028C', '\u0254', '\u00E6', '\u0250', 'a', '\u0276', '\u0251', '\u0252', '\u0298', '\u01C0', '\u01C3', '\u01C2', '\u01C1', '\u0253',
-    '\u0257', '\u0284', '\u0260', '\u029B', '\u02C8', '\u02CC', '.', '\u02D0', '\u02D1', '|', '\u2016', '\u02B8', 'w', '\u0265', '\u0303', '\u0325', '\u032C', '\u0339', '\u0318', '\u031F', '\u0320',
-    '\u0308', '\u033D', '\u0329', '\u032F', '\u02B0', '\u02B2', '\u02DE', '\u207F', '\u02E0'
-]
+# Your replacement dictionary (example)
+replacements = {
+    "br": ["br", "pr"],
+    "u": ["u", "oo", "ou"],
+    "ce": ["ce", "s", "se"],
+    "oo": ["u", "ou"],
+    "ph": ["f", "v"],
+    "sh": ["ch", "s"]
+}
 
-phoneme_symbols:
-- 'p'
-- 'b'
-- 't'
-- 'd'
-- 'ʈ'
-- 'ɖ'
-- 'c'
-- 'ɟ'
-- 'k'
-- 'ɡ'
-- 'q'
-- 'ɢ'
-- '\u02A1'
-- '\u0294'
-- 'm'
-- '\u0271'
-- 'n'
-- '\u0273'
-- '\u0272'
-- '\u014B'
-- '\u0274'
-- '\u0299'
-- 'r'
-- '\u0280'
-- '\u027E'
-- '\u027D'
-- '\u0278'
-- '\u03B2'
-- 'f'
-- 'v'
-- '\u03B8'
-- '\u00F0'
-- 's'
-- 'z'
-- '\u0283'
-- '\u0292'
-- '\u0282'
-- '\u0290'
-- '\u00E7'
-- '\u029D'
-- 'x'
-- '\u0263'
-- '\u03C7'
-- '\u0281'
-- '\u0127'
-- '\u0295'
-- 'h'
-- '\u0266'
-- '\u026C'
-- '\u026E'
-- '\u028B'
-- '\u0279'
-- '\u027B'
-- 'j'
-- '\u0270'
-- 'l'
-- '\u026D'
-- '\u028E'
-- '\u029F'
-- 'i'
-- 'y'
-- '\u0268'
-- '\u0289'
-- '\u026F'
-- 'u'
-- '\u026A'
-- '\u028F'
-- '\u028A'
-- 'e'
-- '\u00F8'
-- '\u0258'
-- '\u0275'
-- '\u0264'
-- 'o'
-- '\u0259'
-- '\u025B'
-- '\u0153'
-- '\u025E'
-- '\u025C'
-- '\u028C'
-- '\u0254'
-- '\u00E6'
-- '\u0250'
-- 'a'
-- '\u0276'
-- '\u0251'
-- '\u0252'
-- '\u0298'
-- '\u01C0'
-- '\u01C3'
-- '\u01C2'
-- '\u01C1'
-- '\u0253'
-- '\u0257'
-- '\u0284'
-- '\u0260'
-- '\u029B'
-- '\u02C8'
-- '\u02CC'
-- '.'
-- '\u02D0'
-- '\u02D1'
-- '|'
-- '\u2016'
-- '\u02B8'
-- 'w'
-- '\u0265'
-- '\u0303'
-- '\u0325'
-- '\u032C'
-- '\u0339'
-- '\u0318'
-- '\u031F'
-- '\u0320'
-- '\u0308'
-- '\u033D'
-- '\u0329'
-- '\u032F'
-- '\u02B0'
-- '\u02B2'
-- '\u02DE'
-- '\u207F'
-- '\u02E0'
+# Modified vars function
+def vars(name, replacements):
+    lenname = len(name)
+    incr = 0
+    variations = []
+    substitution_count = 0
+    replaced_substrings = []
 
-text_symbols :
-- 'ا'
-- 'ب'
-- 'ت'
-- 'ث'
-- 'ج'
-- 'ح'
-- 'خ'
-- 'د'
-- 'ذ'
-- 'ر'
-- 'ز'
-- 'س'
-- 'ش'
-- 'ص'
-- 'ض'
-- 'ط'
-- 'ظ'
-- 'ع'
-- 'غ'
-- 'ف'
-- 'ق'
-- 'ك'
-- 'ل'
-- 'م'
-- 'ن'
-- 'ه'
-- 'و'
-- 'ي'
-- 'ء'
-- 'أ'
-- 'إ'
-- 'آ'
-- 'ى'
-- 'ة'
-- 'ئ'
-- 'ؤ'
-- '\u0627'
-- '\u0628'
-- '\u062A'
-- '\u062B'
-- '\u062C'
-- '\u062D'
-- '\u062E'
-- '\u062F'
-- '\u0630'
-- '\u0631'
-- '\u0632'
-- '\u0633'
-- '\u0634'
-- '\u0635'
-- '\u0636'
-- '\u0637'
-- '\u0638'
-- '\u0639'
-- '\u063A'
-- '\u0641'
-- '\u0642'
-- '\u0643'
-- '\u0644'
-- '\u0645'
-- '\u0646'
-- '\u0647'
-- '\u0648'
-- '\u064A'
-- '\u0621'
-- '\u0623'
-- '\u0625'
-- '\u0622'
-- '\u0649'
-- '\u0629'
-- '\u0626'
-- '\u0624'
+    for ind in range(lenname):
+        for length in range(0, lenname - incr + 1):
+            substring = name[incr:lenname - length]
+            if substring in replacements:
+                incr += len(substring)
+                substitution_count += 1
+                replaced_substrings.append(substring)
+                if not variations:
+                    variations = replacements[substring]
+                else:
+                    variations = list(itertools.product(variations, replacements[substring]))
+                    variations = [''.join(x) for x in variations]
+                break
+
+    return {
+        "original": name,
+        "variations": variations,
+        "variation_count": len(variations),
+        "substitution_count": substitution_count,
+        "replaced_substrings": replaced_substrings
+    }
+
+# Example list of names
+names = ["bruce", "philip", "shaun", "lucas", "michelle"]
+
+# Process names and collect results
+results = [vars(name, replacements) for name in names]
+
+# Create DataFrame for analysis
+df = pd.DataFrame(results)
+
+# Flatten list of replaced substrings for frequency count
+all_substrings = [s for row in df["replaced_substrings"] for s in row]
+substring_freq = Counter(all_substrings)
+
+# --- STATISTICS ---
+
+print("📊 General Stats")
+print(f"Total names processed: {len(df)}")
+print(f"Average variations per name: {df['variation_count'].mean():.2f}")
+print(f"Average substitutions per name: {df['substitution_count'].mean():.2f}")
+print("\n🔁 Most common replaced substrings:")
+for substring, freq in substring_freq.most_common():
+    print(f"- {substring}: {freq} times")
+
+# --- VISUALIZATION ---
+
+# Distribution of number of variations per name
+plt.figure(figsize=(10, 6))
+sns.histplot(df["variation_count"], bins=10, kde=True, color="skyblue")
+plt.title("Distribution of Generated Variations per Name")
+plt.xlabel("Number of Variations")
+plt.ylabel("Frequency")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
